@@ -1,0 +1,48 @@
+<div (click)="gotohome()" class="backbtn">
+    <button mat-fab disabled aria-label="Example icon button with a heart icon">
+        <i id="backbtnicon" class="material-icons">arrow_back</i>
+    </button>
+</div>
+<div class="container">
+    <h1 id="header">DASHBOARD</h1>
+    <div class="loggedmsg">
+        <p>Logged in to system as abcperera@gmail.com representing Galle division</p>
+    </div>
+    <div class="down">
+        <div class="left">
+            <app-box-button (onaction)="onrejecttabselected" [title]="'Rejected'" [icon]="'report_problem'"></app-box-button>
+            <app-box-button (onaction)="onaccepttabselected" [title]="'Accepted'" [icon]="'done_all'"></app-box-button>
+            <app-box-button (onaction)="onpendingtabselected" [title]="'Pending'" [icon]="'query_builder'"></app-box-button>    
+        </div>
+        <div class="verticalline"></div>
+        <div class="right">
+            <table class="table-div">
+                <thead>
+                    <tr>
+                        <td id="head-cell">NIC</td>
+                        <td id="head-cell">Name</td>
+                        <td id="head-cell">Phone No.</td>
+                        <td id="head-cell">Address</td>
+                        <td id="head-cell">Device Code</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td id="data-cell">9812312345V</td>    
+                        <td id="data-cell">ABC Silva</td>  
+                        <td id="data-cell">0771231231</td>
+                        <td id="data-cell">No.123, ABC Road, Galle, Sri Lanka</td>
+                        <td id="data-cell">3t4r45rgwe354terwe2433t3r3</td>                    
+                    </tr>
+                    <tr>
+                        <td id="data-cell">9812312345V</td>    
+                        <td id="data-cell">ABC Silva</td>  
+                        <td id="data-cell">0771231231</td>
+                        <td id="data-cell">No.123, ABC Road, Galle, Sri Lanka</td>
+                        <td id="data-cell">3t4r45rgwe354terwe2433t3r3</td>                    
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

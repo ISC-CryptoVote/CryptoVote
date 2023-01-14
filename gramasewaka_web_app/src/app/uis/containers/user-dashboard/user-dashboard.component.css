@@ -1,0 +1,117 @@
+.backbtn{
+    width: fit-content;
+    height: fit-content;
+    margin: 0px;
+    padding: 0px;
+    position:absolute; 
+    top:7px; 
+    right:18px;
+}
+
+.container{
+    margin: auto;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    background: url('https://img.freepik.com/free-vector/hand-painted-watercolor-pastel-sky-background_23-2148902771.jpg?w=2000');
+}
+
+#header{
+    padding: 20px;
+    font-size: 46px;
+    background-color: darkblue;
+    width: -webkit-fill-available;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: beige;
+    margin: 0px;
+}
+
+.loggedmsg p{
+    background-color: white;
+    border-style: solid;
+    border-width: thin;
+    color: darkblue;
+    padding: 12px;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    width: fit-content;
+    align-items: center;
+    margin: auto;
+    border-radius: 16px;
+}
+
+
+.loggedmsg{
+    margin-top: 15px;
+}
+
+#backbtnicon{
+    color: aliceblue;
+}
+
+.down{
+    width: 100%;
+    height: -webkit-fill-available;
+    display: flex;
+    margin: 0px;
+    margin-top: 22px;
+    margin-bottom: 22px;
+    align-content: space-around;
+    justify-content: center;
+    align-items: flex-start;  
+}
+
+.left{
+    width: 25%;
+    height: -webkit-fill-available;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+.verticalline{
+    width: 2px;
+    background-color: darkgray;
+    height: -webkit-fill-available;
+}
+.right{
+    width: 74%;
+    height: -webkit-fill-available;
+    margin: 0;
+}
+
+#right table{
+    color: red;
+    font-size: 20px;
+}
+
+.table-div{
+    width: -webkit-fill-available;
+    margin: 20px;
+}
+#head-cell{
+    width: 20%;
+    background-color: azure;
+    border-style: solid;
+    border-width: thin;
+    padding: 4px;
+    border-color: slategrey;
+    text-align: center;
+}
+
+#data-cell{
+    color: black;
+    background-color: white;
+    text-align: center;
+    padding: 20px;
+    border-style: solid;
+    border-width: thin;
+    border-color: darkblue;
+}

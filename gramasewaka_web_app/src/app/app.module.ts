@@ -9,13 +9,17 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatInputModule} from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginContainerComponent } from './uis/containers/login-container/login-container.component';
-import { HomeComponent } from './uis/containers/home/home.component'
+import { HomeComponent } from './uis/containers/home/home.component';
+import { UserDashboardComponent } from './uis/containers/user-dashboard/user-dashboard.component';
+import { BoxButtonComponent } from './uis/elements/box-button/box-button.component'
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginContainerComponent,
-    HomeComponent
+    HomeComponent,
+    UserDashboardComponent,
+    BoxButtonComponent
   ],
   imports: [
     BrowserModule,

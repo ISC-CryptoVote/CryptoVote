@@ -15,4 +15,10 @@ export class HomeComponent {
     const navigationDetails: string[] = ['/login'];
     this.router.navigate(navigationDetails);
   }
+
+  gotodashboard():void {
+    console.log("Loading Dashboard")
+    const navigationDetails: string[] = ['/dashboard'];
+    this.router.navigate(navigationDetails);
+  }
 }
