@@ -36,15 +36,27 @@ def request_ballot():
     
     return make_response(response.json())
     '''
-    id = request.args.get("id")
     payload = {
-        "message": "Requesting ballot"+id,
+        "id": request.headers['Token']
+    }
+    print(payload["id"])
+    response = requests.post(f'http://{config.DB_HOST}:{config.DB_PORT}/user-voted', json=payload)
+
+    
+    if response.json()['voted']:
+        payload = {
+            "message": "User has already voted."
+        }
+        return make_response(payload, 400)
+    
+    payload = {
+        "message": response.json(),
         "status": "success"
     }
     return make_response(payload, 200)
 
 @app.route('/request-otp', methods=["GET"])
-def request_ballot():
+def request_otp():
     # input 
     # output response "otp sent"
     '''

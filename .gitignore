@@ -35,3 +35,7 @@ build/
 #properties file
 config.properties
 /src/main/resources/ridex-a842e-firebase-adminsdk-t7oz6-0fa6e73d38.json
+
+# Voting Service
+/voting_service/venv
+/voting_service/__pycache__
