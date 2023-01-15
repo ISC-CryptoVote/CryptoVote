@@ -1,12 +1,14 @@
 import os
 
 import requests
+import jwt
 
 from flask import Flask, request
 
 from messages import make_response
 import config
 
+otps = {}  # global dictionary to store OTPs generated
 app = Flask(__name__)
 
 
@@ -27,32 +29,33 @@ def request_ballot():
     get user info from database
     if user has voted send error
     if not get admin sign on ballot and send it to user
-
-    sector = request.get_json()['sector']
-    payload = {
-        "sector": sector
-    }
-    response = requests.post(f'http://{config.PD_HOST}:{config.PD_PORT}/predict_disease', json=payload)
-    
-    return make_response(response.json())
     '''
-    payload = {
-        "id": request.headers['Token']
-    }
-    print(payload["id"])
-    response = requests.post(f'http://{config.DB_HOST}:{config.DB_PORT}/user-voted', json=payload)
+    # should get the secret here
+    secret_key = "5bd44771b6531c12c8354aec3e27a8eeeba049cc0423c9208532eb96491c3335"
 
+    # decode the JWT token
+    decoded_token = jwt.decode(request.headers['Token'], secret_key, algorithms='HS256')
     
-    if response.json()['voted']:
+
+    payload = {
+        "id": decoded_token['id']
+    }
+    user_voted_response = requests.post(f'http://{config.DB_HOST}:{config.DB_PORT}/user-voted', json=payload)
+
+    if user_voted_response.json()['voted']:
         payload = {
             "message": "User has already voted."
         }
         return make_response(payload, 400)
     
+    signed_ballot_response = requests.get(f'http://{config.DB_HOST}:{config.DB_PORT}/signed-ballot', json=payload)
+
     payload = {
-        "message": response.json(),
+        "ballot": signed_ballot_response.json()['ballot'],
+        "public-key": signed_ballot_response.json()['public-key'],
         "status": "success"
     }
+    
     return make_response(payload, 200)
 
 @app.route('/request-otp', methods=["GET"])
