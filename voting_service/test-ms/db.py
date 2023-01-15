@@ -16,10 +16,19 @@ def health_check():
 
 
 @app.route('/user-voted', methods=["POST"])
-def request_ballot():
+def user_voted():
     id =request.get_json()['id']
     payload = {
-        "voted": True,
+        "voted": False,
+        "status": "success"
+    }
+    return jsonify(payload), 200, {"Content-Type": "application/json"}
+
+@app.route('/signed-ballot', methods=["GET"])
+def get_signed_ballot():
+    payload = {
+        "ballot": "signed ballot object",
+        "public-key": "public key",
         "status": "success"
     }
     return jsonify(payload), 200, {"Content-Type": "application/json"}
