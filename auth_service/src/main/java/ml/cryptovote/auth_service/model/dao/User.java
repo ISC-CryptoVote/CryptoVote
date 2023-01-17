@@ -21,10 +21,9 @@ public class User implements UserDetails {
     private String id;
 
     @Indexed(unique = true)
-    private String nic;
+    private String username;
 
-    @Indexed(unique = true)
-    private String phone;
+    private String gnDivision;
 
     private String password;
 
@@ -38,9 +37,9 @@ public class User implements UserDetails {
 
     private Boolean suspend;
 
-    public User(String nic, String phone, String password, List<Role> roles, long exp, Boolean enabled, Boolean suspend) {
-        this.nic = nic;
-        this.phone = phone;
+    public User(String username, String gnDivision, String password, List<Role> roles, long exp, Boolean enabled, Boolean suspend) {
+        this.username = username;
+        this.gnDivision = gnDivision;
         this.password = password;
         this.roles = roles;
         this.exp = exp;
@@ -61,7 +60,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return phone;
+        return username;
     }
 
     @Override

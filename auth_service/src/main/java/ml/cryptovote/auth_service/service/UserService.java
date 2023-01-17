@@ -2,6 +2,7 @@ package ml.cryptovote.auth_service.service;
 
 import com.twilio.exception.ApiException;
 import ml.cryptovote.auth_service.enums.Role;
+import ml.cryptovote.auth_service.enums.Status;
 import ml.cryptovote.auth_service.exception.EntityNotFoundException;
 import ml.cryptovote.auth_service.exception.InvalidOperationException;
 import ml.cryptovote.auth_service.helper.CustomHash;
@@ -67,7 +68,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String nic) throws UsernameNotFoundException {
-        Optional<User> userOptional = userRepository.findByNicAndSuspend(nic, false);
+        Optional<User> userOptional = userRepository.findByUsernameAndSuspend(nic, false);
         if(userOptional.isPresent())
             return userOptional.get();
         else
@@ -79,10 +80,10 @@ public class UserService implements UserDetailsService {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public User createUser(String nic, String phone, String password, List<Role> roles, boolean enable) {
+    public User createUser(String username, String gnDivision, String password, List<Role> roles, boolean enable) {
         User user = new User(
-                nic,
-                phone,
+                username,
+                gnDivision,
                 passwordEncoder.encode(password),
                 roles,
                 Instant.now().getEpochSecond() + REFRESH_TOKEN_VALIDITY,
@@ -127,25 +128,39 @@ public class UserService implements UserDetailsService {
         return "OTP is sent";
     }
 
-    public VoterVerifiedResDTO voterVerification(String phone, String otp) {
-        User user;
+    public Voter voterVerification(String phone, String otp) {
         Voter voter;
         if(!this.redisVerifyOtp(phone, Role.VOTER, otp))
             throw new InvalidOperationException("Invalid OTP");
-        String refreshToken = UUID.randomUUID().toString();
 
-        user = (User)this.loadUserByUsername(phone);
-        Optional<Voter> passengerOptional = voterRepository.findByPhone(phone);
-        if(passengerOptional.isEmpty())
+        Optional<Voter> voterOptional = voterRepository.findByPhone(phone);
+        if(voterOptional.isEmpty())
             throw new InvalidOperationException("Try another phone number"); // must change later
-        voter = passengerOptional.get();
-        user.setPassword(passwordEncoder.encode(refreshToken));
-        userRepository.save(user);
-
-        VoterVerifiedResDTO response = modelMapper.map(voter, VoterVerifiedResDTO.class);
-        response.setToken(jwtService.createToken(phone, Arrays.asList(Role.VOTER)));
-        response.setRefreshToken(refreshToken);
-        return response;
+        voter = voterOptional.get();
+        if(voter.getStatus() != Status.UNCONFIRMED) {
+            throw new InvalidOperationException("Can not change the status");
+        }
+        voter.setStatus(Status.PENDING);
+        Voter updatedVoter = voterRepository.save(voter);
+        return updatedVoter;
     }
 
+    public Voter voterRegistration(String nic, String name, String gnDivision, String phone, String macHash, String address) {
+        Voter voter = new Voter(nic, name, phone, macHash, address, gnDivision,null, Status.UNCONFIRMED);
+        Voter regVoter = voterRepository.save(voter);
+        try {
+            sendOTP(phone, Role.VOTER);
+            LOGGER.info("SENDDD");
+        } catch (InvalidKeyException e) {
+            voterRepository.delete(regVoter);
+            LOGGER.error("Unable to send SMS");
+            throw new RuntimeException(e);
+        }
+        return regVoter;
+    }
+
+    public User gsnRegistration(String username, String gnDivision, String password) {
+        User user = createUser(username, gnDivision, password, Arrays.asList(Role.GSN), true);
+        return user;
+    }
 }
