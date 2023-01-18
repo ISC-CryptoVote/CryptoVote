@@ -6,24 +6,31 @@ def encrypt(key,message):
     encryptor = AES.new(key, AES.MODE_GCM)
     ciphertext = encryptor.encrypt(message)
     nonce = encryptor.nonce
-    return ciphertext,nonce
+    return ciphertext.hex(),nonce.hex()
 
 def decrypt(key,message,nonce):
-    encryptor = AES.new(key, AES.MODE_GCM,nonce)
-    ciphertext = encryptor.encrypt(message)
+    encryptor = AES.new(key, AES.MODE_GCM,bytes.fromhex(nonce))
+    ciphertext = encryptor.encrypt(bytes.fromhex(message))
     return ciphertext
 
 def cmac(key,message):
     c = CMAC.new(key, ciphermod=AES)
-    c.update(message)
+    c.update(bytes.fromhex(message))
     mac = c.hexdigest()
     return mac 
+
+def get_otp():
+    return int.from_bytes(get_random_bytes(11),'big') 
+
+def get_key(id,otp):
+    return int(id).to_bytes(5,'big')+otp.to_bytes(11,'big')
 
 if __name__ == "__main__":
     text = 'cryptovote'
     nic = '199845188250'
 
-    key = int(nic).to_bytes(5,'big')+get_random_bytes(11) 
+    key = get_key(nic,get_otp()) 
+    key = get_key(nic,73967897100972511069414005) #received_otp
 
     #encryption
     ciphertext,nonce = encrypt(key,text.encode())

@@ -33,6 +33,21 @@ def get_signed_ballot():
     }
     return jsonify(payload), 200, {"Content-Type": "application/json"}
 
+@app.route('/user-update', methods=["POST"])
+def user_update():
+    id =request.get_json()['id']
+    payload = {
+        "status": "success"
+    }
+    return jsonify(payload), 200, {"Content-Type": "application/json"}
+
+@app.route('/vote-save', methods=["POST"])
+def vote_save():
+    encrypted_vote = request.get_json()['vote']
+    payload = {
+        "status": "success"
+    }
+    return jsonify(payload), 200, {"Content-Type": "application/json"}
 
 if __name__ == "__main__":
     app.run(
