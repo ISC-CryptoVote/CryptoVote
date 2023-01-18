@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import ml.cryptovote.auth_service.enums.Role;
+import ml.cryptovote.auth_service.model.dao.User;
 import ml.cryptovote.auth_service.model.dao.Voter;
 import ml.cryptovote.auth_service.model.dto.*;
 import ml.cryptovote.auth_service.service.UserService;
@@ -97,6 +98,26 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         } catch (DuplicateKeyException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is suspended");
+        }
+    }
+
+    @PostMapping("/gsn/login")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "GSN login")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully login"),
+            @ApiResponse(responseCode = "401", description = "Invalid OTP/phone"),
+            @ApiResponse(responseCode = "403", description = "User is suspended")
+    })
+    public GsnLoginResDTO gsnLogin(@Valid @RequestBody GsnLoginReqDTO data) {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(data.getUsername(), data.getPassword()));
+            GsnLoginResDTO response = userService.gsnLogin(data.getUsername());
+            return response;
+        } catch (AuthenticationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid password");
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
     }
 }

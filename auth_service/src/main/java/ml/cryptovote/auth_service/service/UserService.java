@@ -11,6 +11,7 @@ import ml.cryptovote.auth_service.helper.OtpGenerator;
 import ml.cryptovote.auth_service.model.dao.RedisUserLogin;
 import ml.cryptovote.auth_service.model.dao.User;
 import ml.cryptovote.auth_service.model.dao.Voter;
+import ml.cryptovote.auth_service.model.dto.GsnLoginResDTO;
 import ml.cryptovote.auth_service.model.dto.VoterVerifiedResDTO;
 import ml.cryptovote.auth_service.repository.UserRepository;
 import ml.cryptovote.auth_service.repository.RedisUserLoginRepository;
@@ -162,5 +163,14 @@ public class UserService implements UserDetailsService {
     public User gsnRegistration(String username, String gnDivision, String password) {
         User user = createUser(username, gnDivision, password, Arrays.asList(Role.GSN), true);
         return user;
+    }
+
+    public GsnLoginResDTO gsnLogin(String username) {
+        User user = (User)loadUserByUsername(username);
+        if (!user.isEnabled())
+            throw new EntityNotFoundException("User is suspended");
+        GsnLoginResDTO response = modelMapper.map(user, GsnLoginResDTO.class);
+        response.setToken(jwtService.createToken(username, Arrays.asList(Role.ADMIN)));
+        return response;
     }
 }
