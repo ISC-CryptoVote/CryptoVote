@@ -1,20 +1,20 @@
 from phe import paillier
 from operator import add
 
-def encrypt_vote_array(votes):
+def encrypt_vote_array(publickey, votes):
     # Receives an array of size number of candidates.
     # eg - [0,1,0,0,0] (voter voted for the 2nd candidate)
     # votes - voted array
     # returns an encrypted array of votes
 
-    encryptedArr = [public_key.encrypt(x) for x in votes]
+    encryptedArr = [publickey.encrypt(x) for x in votes]
     return encryptedArr
 
-def decrypt_voted_array(encryptedArr):
+def decrypt_voted_array(privatekey, encryptedArr):
     # encryptedArr - encrypted array of votes
     # returns - deciphered votes (eg - [10,11,9,7,3] if there are 30 voters)
 
-    decryptedArr = [private_key.decrypt(x) for x in encryptedArr]
+    decryptedArr = [privatekey.decrypt(x) for x in encryptedArr]
     return decryptedArr
 
 
