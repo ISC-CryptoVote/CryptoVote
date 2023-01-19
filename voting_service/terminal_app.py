@@ -4,6 +4,7 @@ import aes
 import jwt
 
 from Crypto.Signature import pkcs1_15
+from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA
 
 
@@ -17,7 +18,12 @@ def cli():
 
 def verify_ballot(ballot, signature, public_key_pem):
     public_key = RSA.import_key(public_key_pem)
-    return True # pkcs1_15.new(public_key).verify(signature, ballot)
+    hashed_ballot = SHA256.new(ballot.encode())
+    try:
+        pkcs1_15.new(public_key).verify(hashed_ballot, bytes.fromhex(signature))
+        return True
+    except (ValueError, TypeError):
+        return False
 
 
 @cli.command()
@@ -61,7 +67,7 @@ def vote(token):
             }
             url = 'http://localhost:8000/submit-ballot'
             response = requests.post(url, headers={"Token": token}, json=payload)
-            click.echo(response)
+            click.echo("Successfully Voted")
             return
         click.echo("Cancelled Vote")
     else:
