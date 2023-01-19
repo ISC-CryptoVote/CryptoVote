@@ -53,6 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/passenger/signup",
                         "/api/driver/login",
                         "/api/admin/**",
+                        "/api/voter/**",
                         "/api/auth/**",
                         "/v3/api-docs/**",
                         "/api/swagger-ui.html",

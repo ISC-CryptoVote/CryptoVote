@@ -39,7 +39,7 @@ public class AdminController {
             @ApiResponse(responseCode = "400", description = "GSN already exists"),
             @ApiResponse(responseCode = "500", description = "Error in server")
     })
-    public GsnResDTO createOrgAdmin(@Valid @RequestBody GsnReqDTO data) {
+    public GsnResDTO createGSN(@Valid @RequestBody GsnReqDTO data) {
         try {
             String password = PasswordGenerator.generateCommonLangPassword();
             User user = userService.gsnRegistration(data.getUsername(), data.getGnDivision(), password);

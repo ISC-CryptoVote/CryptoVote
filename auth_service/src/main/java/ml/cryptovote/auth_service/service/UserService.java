@@ -151,7 +151,6 @@ public class UserService implements UserDetailsService {
         Voter regVoter = voterRepository.save(voter);
         try {
             sendOTP(phone, Role.VOTER);
-            LOGGER.info("SENDDD");
         } catch (InvalidKeyException e) {
             voterRepository.delete(regVoter);
             LOGGER.error("Unable to send SMS");
