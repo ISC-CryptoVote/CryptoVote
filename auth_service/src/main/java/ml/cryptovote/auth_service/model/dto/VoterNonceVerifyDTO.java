@@ -2,16 +2,19 @@ package ml.cryptovote.auth_service.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
-import ml.cryptovote.auth_service.enums.Status;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 @Data
 @AllArgsConstructor
-public class ChangeVoterStatusReqDTO {
+public class VoterNonceVerifyDTO {
     @NotBlank
+    @Pattern(regexp = "(\\d{10})")
     private String nic;
-    @NonNull
-    private Status status;
+    @NotBlank
+    private String pubKey;
+    @NotBlank
+    private String encNonce;
+
 }

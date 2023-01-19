@@ -36,7 +36,7 @@ public class GsnService {
     public List<VoterVerifiedResDTO> getPendingVoters() {
         List<Voter> pendingList = voterRepository.findByStatus(Status.PENDING);
         List<VoterVerifiedResDTO>  res = pendingList.stream().map(this::convertToVerifiedDTO).collect(Collectors.toList());
-        return null;
+        return res;
     }
 
     private VoterVerifiedResDTO convertToVerifiedDTO(Voter voter) {

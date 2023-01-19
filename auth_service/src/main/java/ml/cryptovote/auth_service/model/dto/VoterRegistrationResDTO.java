@@ -3,6 +3,7 @@ package ml.cryptovote.auth_service.model.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ml.cryptovote.auth_service.enums.Status;
 
 @Data
 @NoArgsConstructor
@@ -20,4 +21,6 @@ public class VoterRegistrationResDTO {
     private String address;
 
     private String gnDivision;
+
+    private Status status;
 }
