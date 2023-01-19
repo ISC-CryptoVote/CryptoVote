@@ -109,7 +109,7 @@ def submit_ballot():
     # Here decrypted ballot assumed to be a string eg: 00100
     vote_lst = list(decrypted_ballot)
     # Homomorphic encryption, Save vote
-    homomorphic_keys = requests.get(f'http://{config.DB_HOST}:{config.DB_PORT}/homomorphic-keys', json=payload)
+    homomorphic_keys = requests.get(f'http://{config.DB_HOST}:{config.DB_PORT}/homomorphic-keys')
     status = homomorphic_keys.json()['saved']
     private_key = 0
     public_key = 0

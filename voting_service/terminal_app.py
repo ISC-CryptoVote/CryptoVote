@@ -67,7 +67,8 @@ def vote(token):
             }
             url = 'http://localhost:8000/submit-ballot'
             response = requests.post(url, headers={"Token": token}, json=payload)
-            click.echo("Successfully Voted")
+            if response.status_code == 200:
+                click.echo("Successfully Voted")
             return
         click.echo("Cancelled Vote")
     else:

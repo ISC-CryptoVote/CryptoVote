@@ -2,6 +2,7 @@ import os
 
 from flask import Flask, request, jsonify
 from Crypto.Signature import pkcs1_15
+from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA
 from phe import paillier
 
@@ -37,10 +38,11 @@ def user_voted():
 def get_signed_ballot():
     data = "ballot object"
     private_key = RSA.import_key(private_key_pem)
-    signature = 'sasasa'# pkcs1_15.new(private_key).sign(data.encode())
+    hashed_data = SHA256.new(data.encode())
+    signature = pkcs1_15.new(private_key).sign(hashed_data)
     payload = {
         "ballot": data, 
-        "signature": signature,
+        "signature": signature.hex(),
         "public-key": public_key_pem.decode(),
         "status": "success"
     }
@@ -65,8 +67,7 @@ def vote_save():
 # Simulate retriving the homomorphic priavte and public keys from DB
 
 @app.route('/homomorphic-keys', methods=["GET"])
-def vote_save():
-    encrypted_vote = request.get_json()['vote']
+def get_homomorphic_keys():
     public_key, private_key = paillier.generate_paillier_keypair()
     payload = {
         "saved": "t",
