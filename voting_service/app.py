@@ -52,6 +52,7 @@ def request_ballot():
 
     payload = {
         "ballot": signed_ballot_response.json()['ballot'],
+        "signature": signed_ballot_response.json()['signature'],
         "public-key": signed_ballot_response.json()['public-key'],
         "status": "success"
     }
@@ -64,7 +65,7 @@ def request_otp():
     decoded_token = jwt.decode(request.headers['Token'], secret_key, algorithms='HS256')
 
     # Genarate OTP for user
-    otp = 73967897100972511069414005 #aes.get_otp() #int
+    otp = aes.get_otp() #int
     print('otp gennerated',otp)
     otps[decoded_token['id']] = otp
     print('otp saved')
