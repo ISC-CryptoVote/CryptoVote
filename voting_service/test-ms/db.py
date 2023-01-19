@@ -3,6 +3,7 @@ import os
 from flask import Flask, request, jsonify
 from Crypto.Signature import pkcs1_15
 from Crypto.PublicKey import RSA
+from phe import paillier
 
 # dummy keys for ballet signing
 private_key = RSA.generate(2048)
@@ -57,6 +58,20 @@ def user_update():
 def vote_save():
     encrypted_vote = request.get_json()['vote']
     payload = {
+        "status": "success"
+    }
+    return jsonify(payload), 200, {"Content-Type": "application/json"}
+
+# Simulate retriving the homomorphic priavte and public keys from DB
+
+@app.route('/homomorphic-keys', methods=["GET"])
+def vote_save():
+    encrypted_vote = request.get_json()['vote']
+    public_key, private_key = paillier.generate_paillier_keypair()
+    payload = {
+        "saved": "t",
+        "private": private_key,
+        "public": public_key,
         "status": "success"
     }
     return jsonify(payload), 200, {"Content-Type": "application/json"}
