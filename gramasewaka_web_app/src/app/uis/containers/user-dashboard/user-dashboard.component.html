@@ -6,13 +6,13 @@
 <div class="container">
     <h1 id="header">DASHBOARD</h1>
     <div class="loggedmsg">
-        <p>Logged in to system as abcperera@gmail.com representing Galle division</p>
+        <p>{{loggedid}}</p>
     </div>
     <div class="down">
         <div class="left">
-            <app-box-button (onaction)="onrejecttabselected" [title]="'Rejected'" [icon]="'report_problem'"></app-box-button>
-            <app-box-button (onaction)="onaccepttabselected" [title]="'Accepted'" [icon]="'done_all'"></app-box-button>
-            <app-box-button (onaction)="onpendingtabselected" [title]="'Pending'" [icon]="'query_builder'"></app-box-button>    
+            <app-box-button (onaction)="onrejecttabselected()" [title]="'Rejected'" [icon]="'report_problem'"></app-box-button>
+            <app-box-button (onaction)="onaccepttabselected()" [title]="'Accepted'" [icon]="'done_all'"></app-box-button>
+            <app-box-button (onaction)="onpendingtabselected()" [title]="'Pending'" [icon]="'query_builder'"></app-box-button>    
         </div>
         <div class="verticalline"></div>
         <div class="right">

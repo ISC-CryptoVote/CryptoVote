@@ -10,4 +10,8 @@ export class BoxButtonComponent {
   @Input() title: string = "";
   @Input() icon: string = "";
 
+  run(){
+    console.log("OK")
+    this.onaction.emit()
+  }
 }

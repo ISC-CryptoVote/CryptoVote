@@ -12,6 +12,8 @@ import { LoginContainerComponent } from './uis/containers/login-container/login-
 import { HomeComponent } from './uis/containers/home/home.component';
 import { UserDashboardComponent } from './uis/containers/user-dashboard/user-dashboard.component';
 import { BoxButtonComponent } from './uis/elements/box-button/box-button.component'
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -27,9 +29,12 @@ import { BoxButtonComponent } from './uis/elements/box-button/box-button.compone
     MatButtonModule,
     MatInputModule,
     BrowserAnimationsModule,
-    MatIconModule
+    MatIconModule,
+    HttpClientModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+ 
