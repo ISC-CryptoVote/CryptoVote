@@ -1,7 +1,7 @@
 from Crypto.PublicKey import RSA
 
 # Generate a new RSA key
-private_key = RSA.generate(2048)
+private_key = RSA.generate(1024)
 
 # Get the public key from the private key
 public_key = private_key.publickey()

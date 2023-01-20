@@ -15,6 +15,8 @@ public_key = private_key.publickey()
 private_key_pem = private_key.export_key()
 public_key_pem = public_key.export_key()
 
+# user public key
+user_public_key = '-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDF4hI9s0Mem349YzSu3r+ZvuQl\nx7Zmr2LNWXaeeR+m8xbnX9cqIeeFCRdxBfXNzoYgexbnG2hW+1JFbg4OQiFpoLi9\nKJEoyRYZR8dgzrUUFgm0DjpHreiuu/Cr0GvkzBscV0LwBHCoUUJlGLWW6vMQmwGH\nBRV8/tsRtQVy0yB4ZQIDAQAB\n-----END PUBLIC KEY-----'
 app = Flask(__name__)
 
 
@@ -26,6 +28,15 @@ def health_check():
     }
     return jsonify(payload), 200, {"Content-Type": "application/json"}
 
+
+@app.route('/user-public-key', methods=["POST"])
+def get_user_public_key():
+    id =request.get_json()['id']
+    payload = {
+        "public-key": user_public_key,
+        "status": "success"
+    }
+    return jsonify(payload), 200, {"Content-Type": "application/json"}
 
 @app.route('/user-voted', methods=["POST"])
 def user_voted():
@@ -70,7 +81,6 @@ def vote_save():
 
 @app.route('/homomorphic-keys', methods=["GET"])
 def get_public_key():
-    encrypted_vote = request.get_json()['vote']
     public_key, private_key = paillier.generate_paillier_keypair()
     bytes_key = pickle.dumps(public_key)
     str_public_key = codecs.encode(bytes_key,"base64").decode()
