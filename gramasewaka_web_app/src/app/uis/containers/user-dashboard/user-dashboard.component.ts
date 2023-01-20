@@ -14,14 +14,14 @@ export class UserDashboardComponent {
   loggedid: string = "";
   devoced_token: JWTContent;
   users: User[] = [];
-  sel:string=""
+  sel: string = ""
 
   constructor(private router: Router, private apiservice: ApiCallsService, private http: HttpClient) {
     this.devoced_token = jwt_decode<JWTContent>(localStorage.getItem("JWT") || "{}");
     console.log(this.devoced_token)
     this.loggedid = "Logged in to system as " + this.devoced_token.username + " representing " + this.devoced_token.gnDivision + " division"
     this.onpendingtabselected()
-    this.sel="Pending"
+    this.sel = "Pending"
   }
 
   gotohome(): void {
@@ -31,8 +31,8 @@ export class UserDashboardComponent {
   }
 
   onaccepttabselected(): void {
-    this.users=[]
-    this.sel="Accepted"
+    this.users = []
+    this.sel = "Accepted"
     console.log("CLICKED ACCEPTED ")
     this.apiservice.getusers().subscribe((res: any) => {
       let content = res.content
@@ -55,8 +55,8 @@ export class UserDashboardComponent {
 
   }
   onpendingtabselected(): void {
-    this.users=[]
-    this.sel="Pending"
+    this.users = []
+    this.sel = "Pending"
     console.log("CLICKED PENDING ")
     this.apiservice.getusers().subscribe((res: any) => {
       let content = res.content
@@ -77,8 +77,8 @@ export class UserDashboardComponent {
     });
   }
   onrejecttabselected(): void {
-    this.users=[]
-    this.sel="Rejected"
+    this.users = []
+    this.sel = "Rejected"
     console.log("CLICKED REJECTED ")
     this.apiservice.getusers().subscribe((res: any) => {
       let content = res.content
@@ -110,21 +110,28 @@ export class UserDashboardComponent {
     return true
   }
 
-  updateStatus(nic:string,status:string){
+  updateStatus(nic: string, status: string) {
     this.users.forEach((user: User) => {
       if (user.nic == nic) {
-        user.status=status
-        const payload={"nic":nic,"status":status}
-        const sign=this.SignPayload(payload)
-        this.apiservice.updatevoter(payload,sign)
+        user.status = status
+        const payload = { "nic": nic, "status": status }
+        const sign = this.SignPayload(payload)
+        this.apiservice.updatevoter(payload, sign)
       }
     });
     console.log(this.users)
   }
 
   SignPayload(payload: { nic: string; status: string; }) {
-    // SHOULD SIGN WITH PVT KEY
-    return ""
+    let sign = ""
+    this.http.get("assets/key_pair/signature/private.pem", { responseType: 'text' as 'json' }).subscribe((pkey) => {
+      console.log(pkey);
+      const crypto = require('crypto');
+      const privateKey = crypto.createPrivateKey({ key: pkey.toString(), passphrase: "pass123" });
+      const data = Buffer.from(JSON.stringify(payload));
+      sign = crypto.sign("SHA256", data, privateKey).toString('base64')
+    })
+    return sign
   }
 
 }
