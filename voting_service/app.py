@@ -29,14 +29,11 @@ def health_check():
 
 @app.route('/request-ballot', methods=["GET"])
 def request_ballot():
-    # input id, # encrypted with system public key
-    # output 
     '''
     get user info from database
     if user has voted send error
     if not get admin sign on ballot and send it to user
     '''
-
     # get nic and validate
     id = request.headers['id']
     nic_signature = request.headers['sign']
@@ -90,9 +87,8 @@ def request_otp():
 
     # Genarate OTP for user
     otp = aes.get_otp() #int
-    print('otp gennerated',otp)
     otps[id] = otp
-    print('otp saved')
+    print('OTP sent')
     payload = {
         "otp" : otp,
     }
@@ -121,21 +117,19 @@ def submit_ballot():
     cmac_received = request.get_json()["cmac"]
     print(ciphertext,nonce,cmac_received)
 
-    # Decryption
-    key = int(id).to_bytes(5,'big') + otps[id].to_bytes(11,'big')
-    decrypted_ballot = aes.decrypt(key,ciphertext,nonce)
-    cmac_generated = aes.cmac(key,ciphertext)
-    print("decrypted:", decrypted_ballot)
-    print("generated cmac:",cmac_generated)
-
     # CMAC verification
+    key = aes.get_key(id,otps[id])
+    cmac_generated = aes.cmac(key,ciphertext)
+
     if cmac_generated != cmac_received:
-        print("CMAC verified")
         payload = {
-            "message": "Sign verification failed"
+            "message": "CMAC verification failed"
         }
         return make_response(payload, 400)
 
+    print("CMAC verified")
+    # Decryption
+    decrypted_ballot = aes.decrypt(key,ciphertext,nonce)
     # Update db that the user has voted
     payload = {
         "id": id
@@ -156,7 +150,6 @@ def submit_ballot():
     encrypted = paillier_encryption.encrypt_vote_array(public_key,vote_lst)
     encrypted_votes = pickle.dumps(encrypted)
     str_encrpypted_votes = codecs.encode(encrypted_votes,"base64").decode()
-    # encrypted = 'blabla' #homomorphic.encrypt(decrypted_ballot)
     # str_encrypted_votes = codecs.encode(str_encrpypted_votes,"base64").decode()
     payload = {
         "vote": str_encrpypted_votes
