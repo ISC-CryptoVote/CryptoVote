@@ -7,6 +7,8 @@ import aes
 import config
 import paillier_encryption
 from phe import paillier
+import codecs 
+import pickle
 
 otps = {}  # global dictionary to store OTPs generated
 app = Flask(__name__)
@@ -109,22 +111,21 @@ def submit_ballot():
     # Here decrypted ballot assumed to be a string eg: 00100
     vote_lst = list(decrypted_ballot)
     # Homomorphic encryption, Save vote
-    homomorphic_keys = requests.get(f'http://{config.DB_HOST}:{config.DB_PORT}/homomorphic-keys')
-    status = homomorphic_keys.json()['saved']
-    private_key = 0
-    public_key = 0
-    if (status=='t'):
-        # create private and public key and save in db
-        private_key = homomorphic_keys.json()['private'] # used to decrypt the homomorphically ecrypted voting list
-        public_key = homomorphic_keys.json()['public'] # used to homomorphically encrypt the voting list
-    else:
-        public_key, private_key = paillier.generate_paillier_keypair()
+    homomorphic_payload = requests.get(f'http://{config.DB_HOST}:{config.DB_PORT}/homomorphic-keys', json=payload)
+    status = homomorphic_payload.json()['saved']
+    # public key and save in db
+    str_bytes_public_key = homomorphic_payload.json()['public'] # used to homomorphically encrypt the voting list 
+    public_key = pickle.loads(codecs.decode(str_bytes_public_key.encode(),"base64"))
 
     encrypted = paillier_encryption.encrypt_vote_array(public_key,vote_lst)
+    encrypted_votes = pickle.dumps(encrypted)
+    str_encrpypted_votes = codecs.encode(encrypted_votes,"base64").decode()
     # encrypted = 'blabla' #homomorphic.encrypt(decrypted_ballot)
+    # str_encrypted_votes = codecs.encode(str_encrpypted_votes,"base64").decode()
     payload = {
-        "vote": encrypted
+        "vote": str_encrpypted_votes
     }
+    print(str_encrpypted_votes)
     vote_saved = requests.post(f'http://{config.DB_HOST}:{config.DB_PORT}/vote-save', json=payload)
     print("vote saved",vote_saved.status_code)
     

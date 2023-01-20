@@ -5,6 +5,8 @@ from Crypto.Signature import pkcs1_15
 from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA
 from phe import paillier
+import pickle
+import codecs 
 
 # dummy keys for ballet signing
 private_key = RSA.generate(2048)
@@ -67,12 +69,13 @@ def vote_save():
 # Simulate retriving the homomorphic priavte and public keys from DB
 
 @app.route('/homomorphic-keys', methods=["GET"])
-def get_homomorphic_keys():
+def get_public_key():
+    encrypted_vote = request.get_json()['vote']
     public_key, private_key = paillier.generate_paillier_keypair()
+    bytes_key = pickle.dumps(public_key)
+    str_public_key = codecs.encode(bytes_key,"base64").decode()
     payload = {
-        "saved": "t",
-        "private": private_key,
-        "public": public_key,
+        "public": str_public_key,
         "status": "success"
     }
     return jsonify(payload), 200, {"Content-Type": "application/json"}

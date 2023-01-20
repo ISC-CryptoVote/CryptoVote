@@ -1,5 +1,7 @@
 from phe import paillier
 from operator import add
+import pickle
+import codecs
 
 def encrypt_vote_array(publickey, votes):
     # Receives an array of size number of candidates.
@@ -25,6 +27,7 @@ keyring.add(private_key)
 
 if __name__ == "__main__":
 
+    """ 
     votes_from_cand_1 = [0,1,0,0,0]
     votes_from_cand_2 = [0,1,0,0,0]
     votes_from_cand_3 = [0,0,1,0,0]
@@ -43,6 +46,17 @@ if __name__ == "__main__":
     encrypted_counted_votes = [sum(item) for item in zipped_lst_enc]
     decrpted_counted_votes  = decrypt_voted_array(encrypted_counted_votes)
     print("Counting votes : "+ str(decrpted_counted_votes))
-
-
+    """
+    a = 23
+    print(a)
+    print("public key : "+str(public_key.n))
+    bytes_key = pickle.dumps(public_key)
+    str_bytes = codecs.encode(bytes_key,"base64").decode()
+    #print(isinstance(str_bytes, str))
+    # print(str_bytes)
+    pub_obj = pickle.loads(codecs.decode(str_bytes.encode(),"base64"))
+    print("public key : "+str(pub_obj.n))
+    print(public_key)
+    en_a = public_key.encrypt(a)
+    print(isinstance(en_a, str))
     print()
