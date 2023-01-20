@@ -29,7 +29,16 @@ export class ApiCallsService {
     const url = this.baseURL+"/api/gsn/voter/pending"
     return this.http.get<any>(url)
   }
+
+  updatevoter(payload:any,sign:string){
+    const url = this.baseURL+"/api/gsn/voter/verify"
+    return this.http.post<any>(url,{
+      "payload":payload,
+      "sign":sign
+    })
+  }
 }
+
 
 
 

@@ -87,6 +87,11 @@
     margin: 0;
 }
 
+.selected{
+    margin: 0;
+    margin-top: 21px;
+}
+
 #right table{
     color: red;
     font-size: 20px;

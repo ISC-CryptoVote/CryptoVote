@@ -8,6 +8,7 @@
     <div class="loggedmsg">
         <p>{{loggedid}}</p>
     </div>
+    <h1 class="selected">{{sel}}</h1>
     <div class="down">
         <div class="left">
             <app-box-button (onaction)="onrejecttabselected()" [title]="'Rejected'" [icon]="'report_problem'"></app-box-button>
@@ -24,23 +25,20 @@
                         <td id="head-cell">Phone No.</td>
                         <td id="head-cell">Address</td>
                         <td id="head-cell">Device Code</td>
+                       
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td id="data-cell">9812312345V</td>    
-                        <td id="data-cell">ABC Silva</td>  
-                        <td id="data-cell">0771231231</td>
-                        <td id="data-cell">No.123, ABC Road, Galle, Sri Lanka</td>
-                        <td id="data-cell">3t4r45rgwe354terwe2433t3r3</td>                    
+                    <tr *ngFor="let user of users">
+                        <td id="data-cell">{{user.nic}}</td>    
+                        <td id="data-cell">{{user.name}}</td>  
+                        <td id="data-cell">{{user.phone}}</td>
+                        <td id="data-cell">{{user.address}}</td>
+                        <td id="data-cell">{{user.macHash}}</td>
+                        <td *ngIf="user.status=='Pending'" id="data-cell"><button (click)="updateStatus(user.nic,'Approved')">Approve</button></td> 
+                        <td *ngIf="user.status=='Pending'" id="data-cell"><button (click)="updateStatus(user.nic,'Rejected')">Reject</button></td>              
                     </tr>
-                    <tr>
-                        <td id="data-cell">9812312345V</td>    
-                        <td id="data-cell">ABC Silva</td>  
-                        <td id="data-cell">0771231231</td>
-                        <td id="data-cell">No.123, ABC Road, Galle, Sri Lanka</td>
-                        <td id="data-cell">3t4r45rgwe354terwe2433t3r3</td>                    
-                    </tr>
+                   
                 </tbody>
             </table>
         </div>
