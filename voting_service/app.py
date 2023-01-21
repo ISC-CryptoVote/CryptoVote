@@ -34,6 +34,7 @@ def request_ballot():
     if user has voted send error
     if not get admin sign on ballot and send it to user
     '''
+    print('Ballot request received')
     # get nic and validate
     id = request.headers['id']
     nic_signature = request.headers['sign']
@@ -48,28 +49,30 @@ def request_ballot():
         pkcs1_15.new(public_key).verify(hashed_nic, bytes.fromhex(nic_signature))
     except (ValueError, TypeError):
         return make_response(payload, 401)
-
+    print('NIC verified')
     user_voted_response = requests.post(f'http://{config.DB_HOST}:{config.DB_PORT}/user-voted', json=payload)
-
+    print('User vote status checked')
     if user_voted_response.json()['voted']:
+        print('User has already voted')
         payload = {
             "message": "User has already voted."
         }
         return make_response(payload, 400)
     
     signed_ballot_response = requests.get(f'http://{config.DB_HOST}:{config.DB_PORT}/signed-ballot', json=payload)
-
+    print('Signed ballot requested from admin')
     payload = {
         "ballot": signed_ballot_response.json()['ballot'],
         "signature": signed_ballot_response.json()['signature'],
         "public-key": signed_ballot_response.json()['public-key'],
         "status": "success"
     }
-    
+    print('Signed ballot sent to user')
     return make_response(payload, 200)
 
 @app.route('/request-otp', methods=["GET"])
 def request_otp():
+    print('OTP request received')
     # get nic and validate
     id = request.headers['id']
     nic_signature = request.headers['sign']
@@ -84,7 +87,7 @@ def request_otp():
         pkcs1_15.new(public_key).verify(hashed_nic, bytes.fromhex(nic_signature))
     except (ValueError, TypeError):
         return make_response(payload, 401)
-
+    print('NIC verified')
     # Genarate OTP for user
     otp = aes.get_otp() #int
     otps[id] = otp
@@ -96,6 +99,7 @@ def request_otp():
 
 @app.route('/submit-ballot', methods=["POST"])
 def submit_ballot():
+    print('Encrypted ballot recevied')
     # get nic and validate
     id = request.headers['id']
     nic_signature = request.headers['sign']
@@ -110,17 +114,19 @@ def submit_ballot():
         pkcs1_15.new(public_key).verify(hashed_nic, bytes.fromhex(nic_signature))
     except (ValueError, TypeError):
         return make_response(payload, 401)    
-
+    print('NIC verified')
     # Extract encrypted ballot
     ciphertext = request.get_json()["ciphertext"]
     nonce = request.get_json()["nonce"]
     cmac_received = request.get_json()["cmac"]
     print(ciphertext,nonce,cmac_received)
-
+    print("Encrypted:",ciphertext)
+    print("Received CMAC:",cmac_received)
+    print("Nonce:",nonce)
     # CMAC verification
     key = aes.get_key(id,otps[id])
     cmac_generated = aes.cmac(key,ciphertext)
-
+    print('Generated CMAC:',cmac_generated)
     if cmac_generated != cmac_received:
         payload = {
             "message": "CMAC verification failed"
@@ -130,12 +136,13 @@ def submit_ballot():
     print("CMAC verified")
     # Decryption
     decrypted_ballot = aes.decrypt(key,ciphertext,nonce)
+    print('Ballot decrypted')
     # Update db that the user has voted
     payload = {
         "id": id
     }
     user_db_updated = requests.post(f'http://{config.DB_HOST}:{config.DB_PORT}/user-update', json=payload)
-    print("user db updated",user_db_updated.status_code)
+    
 
     # Here decrypted ballot assumed to be a string eg: 00100
     vote_lst = list(decrypted_ballot)
@@ -150,17 +157,19 @@ def submit_ballot():
     encrypted = paillier_encryption.encrypt_vote_array(public_key,vote_lst)
     encrypted_votes = pickle.dumps(encrypted)
     str_encrpypted_votes = codecs.encode(encrypted_votes,"base64").decode()
+    print('Ballot homomorphically encrypted')
     # str_encrypted_votes = codecs.encode(str_encrpypted_votes,"base64").decode()
     payload = {
         "vote": str_encrpypted_votes
     }
-    print(str_encrpypted_votes)
     vote_saved = requests.post(f'http://{config.DB_HOST}:{config.DB_PORT}/vote-save', json=payload)
-    print("vote saved",vote_saved.status_code)
+    print("User db updated",user_db_updated.status_code)
+    print("Vote saved",vote_saved.status_code)
     
     # Response
     if (user_db_updated.status_code == 200) and (vote_saved.status_code == 200):
         del otps[id]
+        print('Vote successfull, response sent')
         payload = {
             "message": "Vote successful"
         }
